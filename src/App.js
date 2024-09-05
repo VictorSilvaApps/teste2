@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Form from './components/PDFForm';
-import PDFDocument from './/components/PDFDocument';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import PDFForm from './components/PDFForm';
+import PDFViewer from './components/PDFDocument';
 
 const App = () => {
   const [data, setData] = useState(null);
@@ -12,18 +11,11 @@ const App = () => {
 
   return (
     <div>
-      <Form onGeneratePDF={handleGeneratePDF} />
+      <PDFForm onGeneratePDF={handleGeneratePDF} />
       {data && (
         <div>
           <h2>Visualização do PDF:</h2>
-          <PDFDownloadLink
-            document={<PDFDocument text={data.text} image={data.image[0]} />}
-            fileName="document.pdf"
-          >
-            {({ loading }) =>
-              loading ? 'Gerando PDF...' : 'Baixar PDF'
-            }
-          </PDFDownloadLink>
+          <PDFViewer text={data.text} image={data.image}/>
         </div>
       )}
     </div>

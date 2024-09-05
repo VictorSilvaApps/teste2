@@ -1,29 +1,41 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
 
 const PDFForm = ({ onGeneratePDF }) => {
-  const [text, setText] = useState('');
-  const [image, setImage] = useState(null);
+  const { handleSubmit, control, setValue, watch, formState: { errors } } = useForm();
 
-  const handleTextChange = (e) => setText(e.target.value);
-  const handleImageChange = (e) => setImage(e.target.files[0]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onGeneratePDF(text, image);
+  const onSubmit = (data) => {
+    if (onGeneratePDF) {
+      onGeneratePDF(data);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-    
-            <div>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
         <label>Texto:</label>
-        <textarea value={text} onChange={handleTextChange} />
+        <textarea {...control.register('text', { required: 'Texto é obrigatório' })} />
+        {errors.text && <p>{errors.text.message}</p>}
       </div>
       <div>
-        <label>Imagm:</label>
-        <input type="file" accept="image/*" onChange={handleImageChange} />
+        <label>Imagem:</label>
+        <Controller
+          name="image"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                setValue('image', e.target.files[0]);
+              }}
+            />
+          )}
+        />
+        {errors.image && <p>{errors.image.message}</p>}
       </div>
-      <button type="submit" >Gerar PDF</button>
+      <button type="submit">Gerar PDF</button>
     </form>
   );
 };
